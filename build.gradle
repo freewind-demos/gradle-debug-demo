@@ -1,18 +1,63 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        // only necessary for downloadDirectory task below
+        if (gradle.gradleVersion.split("\\.")[0].toInteger() >= 2) {
+            classpath 'org.apache.ivy:ivy:2.3.0'
+        }
+    }
+}
+
+plugins {
+    id 'de.undercouch.download' version '3.4.3'
+}
+
 apply plugin: 'java'
+apply plugin: 'de.undercouch.download'
 
 repositories {
     mavenLocal()
     jcenter()
 }
 
+def gradleVersion = "4.8.1"
+
 dependencies {
     compile 'org.apache.commons:commons-lang3:3.4'
-    testCompile 'junit:junit:4.11'
-    testCompile 'org.easytesting:fest-assert-core:2.0M10'
+    compile files("libs/gradle-$gradleVersion-all.jar")
 }
 
-// used to generate `./gradlew`
-// by run `gradle wrapper`
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.8' //version required
+task prepareGradle() {
+    doLast {
+        def targetFile = new File("$buildDir/downloaded/gradle-$gradleVersion-all.zip")
+
+        println("--- download gradle with version $gradleVersion (> 100M), wait for a while ---")
+        download {
+            src "https://downloads.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+            dest targetFile
+            overwrite false
+        }
+
+        println("--- extract the zip file ---")
+        copy {
+            from zipTree(targetFile), {
+                include '**'
+            }
+            into targetFile.parentFile
+        }
+
+        println("--- package sources ---")
+        ant.zip(destfile: "$projectDir/libs/gradle-$gradleVersion-all-sources.zip") {
+            fileset(dir: "${targetFile.parentFile}/gradle-$gradleVersion/src") {
+                include(name: '**/*.java')
+            }
+        }
+
+        println("--- merge jars ---")
+        ant.zip(destfile: "$projectDir/libs/gradle-$gradleVersion-all.jar") {
+            zipgroupfileset(dir: "${targetFile.parentFile}/gradle-$gradleVersion/lib", includes: "**/*.jar")
+        }
+    }
 }
