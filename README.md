@@ -14,8 +14,8 @@ Download gradle jars and sources
 
 It will download the gradle distribution and unzip it, then generate all the required `.class` and source files to `libs`
 
-- most gradle class files merged to: `gradle-4.8.1-all.jar`
-- source files: `gradle-4.8.1-all-sources.zip`
+- all class files merged to: `gradle-4.8.1-all.jar`
+- all source files packaged to: `gradle-4.8.1-all-sources.zip`
 
 If you need to use other versions of gradle, you have to modify the version in `build.gradle`
 
