@@ -71,7 +71,7 @@ Set breakpoints
 
 1. Press `Cmd + N`, and search `BasicScript` (make sure its package is `org.gradle.groovy.scripts`)
 2. Press `Enter` to open it, should see the raw Java source (not decompiled one), since we have already attached the sources
-3. Find `public Object invokeMethod(String name, Object args)`, and give a breakpoint in the body (click on the left side of the code line, and see a red dot)
+3. Find `public Object invokeMethod(String name, Object args)`, and give a breakpoint in the body (click on the left side of the code line, will see a red dot)
 
 Notice this is not the very beginning of gradle running, but is a good start point.
 
